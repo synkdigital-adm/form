@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Synk Digital — Sistemas sob medida para profissionais</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue: #1a2080;
+    --purple: #5c1a8e;
+    --mid: #3a1a87;
+    --white: #ffffff;
+    --off-white: #f0eef8;
+    --muted: rgba(255,255,255,0.55);
+    --accent: #a855f7;
+    --accent-light: #c084fc;
+    --glass: rgba(255,255,255,0.06);
+    --glass-border: rgba(255,255,255,0.12);
+    --card-bg: rgba(26, 32, 128, 0.35);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #0d0f2b;
+    color: var(--white);
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    position: fixed; width: 10px; height: 10px;
+    background: var(--accent-light); border-radius: 50%;
+    pointer-events: none; z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s ease;
+    mix-blend-mode: screen;
+  }
+  .cursor-ring {
+    position: fixed; width: 36px; height: 36px;
+    border: 1.5px solid rgba(168,85,247,0.5); border-radius: 50%;
+    pointer-events: none; z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: transform 0.18s ease, width 0.3s ease, height 0.3s ease, opacity 0.3s ease;
+  }
+
+  /* NOISE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 0; opacity: 0.35;
+  }
+
+  /* BG GRADIENT MESH */
+  .bg-mesh {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 10% 20%, rgba(26,32,128,0.6) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 50% at 90% 80%, rgba(92,26,142,0.5) 0%, transparent 55%),
+      radial-gradient(ellipse 40% 40% at 50% 50%, rgba(58,26,135,0.3) 0%, transparent 60%),
+      #0d0f2b;
+  }
+
+  /* NAVBAR */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    padding: 22px 60px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: rgba(13,15,43,0.7);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--glass-border);
+  }
+
+  .nav-logo {
+    display: flex; align-items: center; gap: 12px;
+    text-decoration: none;
+  }
+
+  .nav-logo-img {
+    height: 38px; width: auto;
+  }
+
+  .nav-links {
+    display: flex; align-items: center; gap: 36px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.88rem;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--white); }
+
+  .nav-cta {
+    background: linear-gradient(135deg, var(--blue), var(--purple));
+    color: var(--white) !important;
+    padding: 10px 24px;
+    border-radius: 6px;
+    font-weight: 500 !important;
+    letter-spacing: 0.02em !important;
+    transition: opacity 0.2s, transform 0.2s !important;
+  }
+  .nav-cta:hover { opacity: 0.9; transform: translateY(-1px); }
+
+  /* HERO */
+  .hero {
+    position: relative; z-index: 1;
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: flex-start;
+    padding: 140px 60px 80px;
+    max-width: 1300px; margin: 0 auto;
+  }
+
+  .hero-tag {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--glass); border: 1px solid var(--glass-border);
+    padding: 7px 16px; border-radius: 100px;
+    font-size: 0.78rem; font-weight: 500; letter-spacing: 0.08em;
+    color: var(--accent-light); text-transform: uppercase;
+    margin-bottom: 32px;
+    animation: fadeUp 0.8s ease both;
+  }
+  .hero-tag::before {
+    content: ''; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent-light);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(1.4); }
+  }
+
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(3rem, 7vw, 6.5rem);
+    font-weight: 800;
+    line-height: 1.0;
+    letter-spacing: -0.03em;
+    max-width: 900px;
+    animation: fadeUp 0.9s 0.1s ease both;
+  }
+
+  .hero h1 .grad {
+    background: linear-gradient(135deg, #c084fc 0%, #7c3aed 40%, #3b82f6 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+
+  .hero-sub {
+    margin-top: 28px;
+    font-size: clamp(1rem, 1.8vw, 1.2rem);
+    color: var(--muted);
+    max-width: 560px;
+    line-height: 1.7;
+    font-weight: 300;
+    animation: fadeUp 1s 0.2s ease both;
+  }
+
+  .hero-actions {
+    display: flex; gap: 16px; align-items: center;
+    margin-top: 48px;
+    animation: fadeUp 1s 0.35s ease both;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #3b1fa8, #6d28d9);
+    color: var(--white);
+    padding: 16px 36px;
+    border-radius: 8px;
+    font-size: 0.95rem; font-weight: 500;
+    text-decoration: none;
+    letter-spacing: 0.02em;
+    border: none; cursor: none;
+    position: relative; overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 30px rgba(109,40,217,0.4);
+  }
+  .btn-primary::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+    opacity: 0; transition: opacity 0.2s;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 40px rgba(109,40,217,0.6); }
+  .btn-primary:hover::after { opacity: 1; }
+
+  .btn-ghost {
+    color: var(--muted);
+    padding: 16px 28px;
+    border-radius: 8px;
+    font-size: 0.95rem; font-weight: 400;
+    text-decoration: none;
+    border: 1px solid var(--glass-border);
+    transition: color 0.2s, border-color 0.2s, background 0.2s;
+    cursor: none;
+  }
+  .btn-ghost:hover { color: var(--white); border-color: rgba(255,255,255,0.3); background: var(--glass); }
+
+  .hero-stats {
+    display: flex; gap: 48px; margin-top: 80px;
+    animation: fadeUp 1s 0.45s ease both;
+  }
+  .stat-item { display: flex; flex-direction: column; gap: 4px; }
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 2.2rem; font-weight: 800;
+    background: linear-gradient(135deg, #c084fc, #818cf8);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .stat-label { font-size: 0.8rem; color: var(--muted); font-weight: 300; letter-spacing: 0.04em; }
+
+  /* FLOATING CARDS in hero */
+  .hero-visual {
+    position: absolute; right: 60px; top: 50%; transform: translateY(-50%);
+    width: 420px; display: none;
+  }
+  @media(min-width: 1200px) { .hero-visual { display: block; } }
+
+  .float-card {
+    background: var(--glass); border: 1px solid var(--glass-border);
+    backdrop-filter: blur(12px);
+    border-radius: 16px; padding: 20px 24px;
+    position: absolute;
+  }
+  .float-card-1 { top: 0; right: 0; width: 280px; animation: float1 6s ease-in-out infinite; }
+  .float-card-2 { top: 140px; right: 160px; width: 240px; animation: float2 7s ease-in-out infinite; }
+  .float-card-3 { top: 290px; right: 30px; width: 220px; animation: float3 5.5s ease-in-out infinite; }
+
+  @keyframes float1 { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+  @keyframes float2 { 0%,100%{transform:translateY(0)} 50%{transform:translateY(10px)} }
+  @keyframes float3 { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+
+  .float-card-label { font-size: 0.72rem; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 10px; }
+  .float-card-title { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; }
+  .float-card-desc { font-size: 0.8rem; color: var(--muted); margin-top: 6px; font-weight: 300; line-height: 1.5; }
+  .float-card-icon {
+    width: 36px; height: 36px; border-radius: 8px;
+    background: linear-gradient(135deg, var(--blue), var(--purple));
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 12px; font-size: 1rem;
+  }
+
+  /* DIVIDER */
+  .section-divider {
+    position: relative; z-index: 1;
+    border: none;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--glass-border), transparent);
+    margin: 0;
+  }
+
+  /* SECTIONS */
+  section { position: relative; z-index: 1; }
+
+  .section-inner {
+    max-width: 1300px; margin: 0 auto;
+    padding: 100px 60px;
+  }
+
+  .section-tag {
+    font-size: 0.75rem; font-weight: 500; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--accent);
+    margin-bottom: 16px;
+  }
+
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 800; letter-spacing: -0.02em;
+    line-height: 1.1;
+    max-width: 640px;
+  }
+
+  .section-sub {
+    margin-top: 20px;
+    font-size: 1rem; color: var(--muted);
+    max-width: 540px; line-height: 1.75; font-weight: 300;
+  }
+
+  /* HOW IT WORKS */
+  .process-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 2px; margin-top: 64px;
+    border: 1px solid var(--glass-border); border-radius: 20px; overflow: hidden;
+  }
+
+  .process-step {
+    background: var(--card-bg); backdrop-filter: blur(8px);
+    padding: 40px 32px;
+    transition: background 0.3s;
+    position: relative;
+  }
+  .process-step:hover { background: rgba(92,26,142,0.25); }
+
+  .step-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 3.5rem; font-weight: 800;
+    color: rgba(168,85,247,0.15);
+    line-height: 1; margin-bottom: 20px;
+    letter-spacing: -0.04em;
+  }
+
+  .step-icon {
+    width: 44px; height: 44px; border-radius: 10px;
+    background: linear-gradient(135deg, rgba(26,32,128,0.8), rgba(92,26,142,0.8));
+    border: 1px solid var(--glass-border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; margin-bottom: 20px;
+  }
+
+  .step-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.1rem; font-weight: 700; margin-bottom: 10px;
+  }
+
+  .step-desc { font-size: 0.88rem; color: var(--muted); line-height: 1.7; font-weight: 300; }
+
+  /* CASOS DE USO */
+  .cases-section { background: rgba(26,32,128,0.08); }
+
+  .cases-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px; margin-top: 64px;
+  }
+
+  .case-card {
+    background: var(--glass); border: 1px solid var(--glass-border);
+    border-radius: 20px; padding: 36px 32px;
+    transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+    cursor: none;
+  }
+  .case-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 60px rgba(92,26,142,0.3);
+    border-color: rgba(168,85,247,0.3);
+  }
+
+  .case-icon {
+    width: 52px; height: 52px; border-radius: 14px;
+    background: linear-gradient(135deg, var(--blue), var(--purple));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem; margin-bottom: 24px;
+  }
+
+  .case-sector {
+    font-size: 0.72rem; font-weight: 500; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 8px;
+  }
+
+  .case-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.2rem; font-weight: 700; margin-bottom: 12px;
+  }
+
+  .case-desc { font-size: 0.87rem; color: var(--muted); line-height: 1.7; font-weight: 300; }
+
+  .case-tags {
+    display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px;
+  }
+  .case-tag {
+    font-size: 0.72rem; font-weight: 400; letter-spacing: 0.04em;
+    padding: 5px 12px; border-radius: 100px;
+    background: rgba(168,85,247,0.12); color: var(--accent-light);
+    border: 1px solid rgba(168,85,247,0.2);
+  }
+
+  /* PRICING */
+  .pricing-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px; margin-top: 64px;
+  }
+
+  .price-card {
+    background: var(--glass); border: 1px solid var(--glass-border);
+    border-radius: 24px; padding: 40px 32px;
+    position: relative; transition: transform 0.3s, box-shadow 0.3s;
+    cursor: none;
+  }
+  .price-card:hover { transform: translateY(-4px); box-shadow: 0 16px 50px rgba(92,26,142,0.25); }
+
+  .price-card.featured {
+    background: linear-gradient(145deg, rgba(58,26,135,0.5), rgba(92,26,142,0.4));
+    border-color: rgba(168,85,247,0.4);
+    box-shadow: 0 0 0 1px rgba(168,85,247,0.15), 0 20px 60px rgba(92,26,142,0.3);
+  }
+
+  .price-badge {
+    position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
+    background: linear-gradient(135deg, var(--blue), var(--purple));
+    color: var(--white); font-size: 0.72rem; font-weight: 600;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    padding: 6px 18px; border-radius: 100px;
+    white-space: nowrap;
+  }
+
+  .price-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem; font-weight: 700; letter-spacing: 0.04em;
+    color: var(--muted); text-transform: uppercase; margin-bottom: 8px;
+  }
+
+  .price-main {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem; color: var(--muted); margin-bottom: 6px;
+  }
+
+  .price-impl {
+    font-family: 'Syne', sans-serif;
+    font-size: 2rem; font-weight: 800;
+    background: linear-gradient(135deg, #c084fc, #818cf8);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    margin-bottom: 4px;
+  }
+
+  .price-recurrence {
+    font-size: 0.88rem; color: var(--muted); margin-bottom: 32px; font-weight: 300;
+  }
+
+  .price-divider {
+    height: 1px; background: var(--glass-border); margin-bottom: 28px;
+  }
+
+  .price-features { list-style: none; display: flex; flex-direction: column; gap: 14px; }
+
+  .price-feature {
+    display: flex; align-items: flex-start; gap: 12px;
+    font-size: 0.88rem; color: var(--muted); font-weight: 300; line-height: 1.5;
+  }
+  .price-feature::before {
+    content: '✦';
+    color: var(--accent); font-size: 0.65rem; margin-top: 3px; flex-shrink: 0;
+  }
+
+  .price-btn {
+    display: block; text-align: center; margin-top: 36px;
+    padding: 14px; border-radius: 8px;
+    font-size: 0.9rem; font-weight: 500; text-decoration: none;
+    letter-spacing: 0.03em; transition: all 0.2s; cursor: none;
+  }
+  .price-btn-ghost {
+    border: 1px solid var(--glass-border); color: var(--muted);
+  }
+  .price-btn-ghost:hover { border-color: rgba(168,85,247,0.4); color: var(--white); background: var(--glass); }
+
+  .price-btn-primary {
+    background: linear-gradient(135deg, #3b1fa8, #6d28d9);
+    color: var(--white);
+    box-shadow: 0 4px 20px rgba(109,40,217,0.4);
+  }
+  .price-btn-primary:hover { box-shadow: 0 8px 30px rgba(109,40,217,0.6); transform: translateY(-1px); }
+
+  /* DIFFERENTIALS */
+  .diff-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 32px; margin-top: 64px;
+  }
+  .diff-item { display: flex; flex-direction: column; gap: 16px; }
+  .diff-icon {
+    width: 48px; height: 48px; border-radius: 12px;
+    border: 1px solid var(--glass-border);
+    background: var(--glass);
+    display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+  }
+  .diff-title { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; }
+  .diff-desc { font-size: 0.87rem; color: var(--muted); line-height: 1.7; font-weight: 300; }
+
+  /* CTA / CONTACT */
+  .cta-section {
+    text-align: center;
+    padding: 120px 60px;
+    max-width: 1300px; margin: 0 auto;
+  }
+
+  .cta-section h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2.4rem, 5vw, 4rem);
+    font-weight: 800; letter-spacing: -0.03em;
+    line-height: 1.1;
+  }
+
+  .cta-section p {
+    margin-top: 20px; color: var(--muted);
+    font-size: 1rem; max-width: 480px; margin-left: auto; margin-right: auto;
+    line-height: 1.75; font-weight: 300;
+  }
+
+  .contact-form {
+    margin-top: 56px;
+    display: flex; flex-direction: column; gap: 16px;
+    max-width: 560px; margin-left: auto; margin-right: auto;
+  }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  .form-field {
+    background: var(--glass); border: 1px solid var(--glass-border);
+    border-radius: 10px; padding: 14px 18px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem; color: var(--white);
+    outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+    cursor: none;
+  }
+  .form-field::placeholder { color: rgba(255,255,255,0.3); }
+  .form-field:focus { border-color: rgba(168,85,247,0.5); box-shadow: 0 0 0 3px rgba(168,85,247,0.1); }
+
+  select.form-field { appearance: none; cursor: none; }
+  textarea.form-field { resize: none; height: 120px; }
+
+  .form-submit {
+    background: linear-gradient(135deg, #3b1fa8, #6d28d9);
+    color: var(--white);
+    border: none; border-radius: 10px;
+    padding: 16px; font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem; font-weight: 500;
+    letter-spacing: 0.04em; cursor: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 24px rgba(109,40,217,0.4);
+  }
+  .form-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 36px rgba(109,40,217,0.6); }
+
+  /* FOOTER */
+  footer {
+    position: relative; z-index: 1;
+    border-top: 1px solid var(--glass-border);
+    padding: 48px 60px;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 24px; flex-wrap: wrap;
+  }
+
+  .footer-logo { opacity: 0.7; }
+  .footer-logo img { height: 30px; }
+  .footer-copy { font-size: 0.8rem; color: rgba(255,255,255,0.3); font-weight: 300; }
+
+  .footer-links {
+    display: flex; gap: 28px; list-style: none;
+  }
+  .footer-links a {
+    font-size: 0.8rem; color: rgba(255,255,255,0.35);
+    text-decoration: none; transition: color 0.2s;
+  }
+  .footer-links a:hover { color: var(--muted); }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(28px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .reveal {
+    opacity: 0; transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+  .reveal-delay-4 { transition-delay: 0.4s; }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(168,85,247,0.3); border-radius: 4px; }
+
+  /* GLOWING LINE */
+  .glow-line {
+    position: absolute; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, rgba(168,85,247,0.6) 50%, transparent 100%);
+    pointer-events: none;
+  }
+
+  /* MOBILE */
+  @media(max-width: 768px) {
+    nav { padding: 18px 24px; }
+    .nav-links { display: none; }
+    .hero { padding: 120px 24px 60px; }
+    .hero-stats { gap: 32px; flex-wrap: wrap; }
+    .section-inner { padding: 72px 24px; }
+    .form-row { grid-template-columns: 1fr; }
+    footer { padding: 36px 24px; flex-direction: column; align-items: flex-start; }
+    .cta-section { padding: 80px 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+<div class="bg-mesh"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">
+    <img src="/mnt/user-data/uploads/LogoSynkDigital.png" alt="Synk Digital" class="nav-logo-img">
+  </a>
+  <ul class="nav-links">
+    <li><a href="#processo">Como funciona</a></li>
+    <li><a href="#sistemas">Sistemas</a></li>
+    <li><a href="#planos">Planos</a></li>
+    <li><a href="#contato" class="nav-cta">Falar com especialista</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section>
+  <div class="hero">
+    <div class="hero-tag">Nova fase · Sistemas exclusivos</div>
+    <h1>Tecnologia feita<br>para <span class="grad">o seu negócio.</span></h1>
+    <p class="hero-sub">Desenvolvemos sistemas únicos, instalados diretamente para cada cliente. Sem soluções genéricas — só o que resolve de verdade as suas dores.</p>
+    <div class="hero-actions">
+      <a href="#contato" class="btn-primary">Solicitar diagnóstico</a>
+      <a href="#sistemas" class="btn-ghost">Ver sistemas →</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <span class="stat-num">100%</span>
+        <span class="stat-label">Personalizado</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">1:1</span>
+        <span class="stat-label">Atendimento dedicado</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">∞</span>
+        <span class="stat-label">Evolução contínua</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating cards decoration -->
+  <div class="hero-visual">
+    <div class="float-card float-card-1">
+      <div class="float-card-icon">📋</div>
+      <div class="float-card-label">Sistema instalado</div>
+      <div class="float-card-title">Gestão de Atendimentos</div>
+      <div class="float-card-desc">Clínica Dr. Marcos — 3× mais produtividade</div>
+    </div>
+    <div class="float-card float-card-2">
+      <div class="float-card-icon">⚙️</div>
+      <div class="float-card-label">Em operação</div>
+      <div class="float-card-title">Automação de Propostas</div>
+      <div class="float-card-desc">Escritório JL — economia de 12h/semana</div>
+    </div>
+    <div class="float-card float-card-3">
+      <div class="float-card-icon">📊</div>
+      <div class="float-card-label">Ativo</div>
+      <div class="float-card-title">Dashboard Financeiro</div>
+      <div class="float-card-desc">Loja Optimus — visibilidade total em tempo real</div>
+    </div>
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- DIFERENCIAIS -->
+<section>
+  <div class="section-inner">
+    <p class="section-tag reveal">Por que Synk Digital</p>
+    <h2 class="section-title reveal reveal-delay-1">Sistemas pensados de dentro para fora do seu negócio</h2>
+    <p class="section-sub reveal reveal-delay-2">Não trabalhamos com templates ou soluções prontas. Cada sistema é construído do zero para atender exatamente o que você precisa.</p>
+    <div class="diff-grid">
+      <div class="diff-item reveal reveal-delay-1">
+        <div class="diff-icon">🎯</div>
+        <div class="diff-title">Exclusividade total</div>
+        <div class="diff-desc">Seu sistema é único. Desenvolvido especificamente para as suas dores, fluxos e objetivos.</div>
+      </div>
+      <div class="diff-item reveal reveal-delay-2">
+        <div class="diff-icon">🔧</div>
+        <div class="diff-title">Instalado diretamente</div>
+        <div class="diff-desc">Implantamos na sua infraestrutura. Sem dependência de terceiros ou plataformas externas.</div>
+      </div>
+      <div class="diff-item reveal reveal-delay-3">
+        <div class="diff-icon">🔄</div>
+        <div class="diff-title">Manutenção contínua</div>
+        <div class="diff-desc">Contrato de recorrência com suporte ativo, atualizações e evoluções do sistema.</div>
+      </div>
+      <div class="diff-item reveal reveal-delay-4">
+        <div class="diff-icon">🤝</div>
+        <div class="diff-title">Parceria de longo prazo</div>
+        <div class="diff-desc">Não entregamos e somimos. Somos parte do seu time enquanto o sistema rodar.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- COMO FUNCIONA -->
+<section id="processo">
+  <div class="section-inner">
+    <p class="section-tag reveal">Processo</p>
+    <h2 class="section-title reveal reveal-delay-1">Do diagnóstico ao sistema em produção</h2>
+    <p class="section-sub reveal reveal-delay-2">Um processo estruturado para garantir que cada entrega resolva o problema certo da forma mais eficiente.</p>
+    <div class="process-grid reveal">
+      <div class="process-step">
+        <div class="step-num">01</div>
+        <div class="step-icon">🔍</div>
+        <div class="step-title">Diagnóstico</div>
+        <div class="step-desc">Mergulhamos fundo nos seus processos, rotinas e dores. Identificamos onde a tecnologia pode gerar mais impacto real.</div>
+      </div>
+      <div class="process-step">
+        <div class="step-num">02</div>
+        <div class="step-icon">📐</div>
+        <div class="step-title">Projeto</div>
+        <div class="step-desc">Desenhamos a arquitetura do sistema. Apresentamos protótipos e validamos cada funcionalidade com você antes de codar.</div>
+      </div>
+      <div class="process-step">
+        <div class="step-num">03</div>
+        <div class="step-icon">⚡</div>
+        <div class="step-title">Desenvolvimento</div>
+        <div class="step-desc">Construímos o sistema com atualizações frequentes. Você acompanha o progresso e valida cada entrega em tempo real.</div>
+      </div>
+      <div class="process-step">
+        <div class="step-num">04</div>
+        <div class="step-icon">🚀</div>
+        <div class="step-title">Implantação</div>
+        <div class="step-desc">Instalamos diretamente no seu ambiente com treinamento da equipe e suporte total na transição.</div>
+      </div>
+      <div class="process-step">
+        <div class="step-num">05</div>
+        <div class="step-icon">🔄</div>
+        <div class="step-title">Manutenção</div>
+        <div class="step-desc">Plano de recorrência com suporte, monitoramento, atualizações e evolução contínua do sistema.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- CASOS DE USO -->
+<section id="sistemas" class="cases-section">
+  <div class="section-inner">
+    <p class="section-tag reveal">Exemplos de sistemas</p>
+    <h2 class="section-title reveal reveal-delay-1">Sistemas que já transformaram negócios reais</h2>
+    <p class="section-sub reveal reveal-delay-2">Cada projeto é único, mas aqui estão exemplos do que construímos para profissionais como você.</p>
+    <div class="cases-grid">
+      <div class="case-card reveal reveal-delay-1">
+        <div class="case-icon">🏥</div>
+        <div class="case-sector">Saúde</div>
+        <div class="case-title">Sistema de Gestão de Clínica</div>
+        <div class="case-desc">Agendamento inteligente, prontuário digital, controle de retornos, faturamento e relatórios automáticos integrados em um único painel.</div>
+        <div class="case-tags">
+          <span class="case-tag">Agendamento</span>
+          <span class="case-tag">Prontuário</span>
+          <span class="case-tag">Faturamento</span>
+        </div>
+      </div>
+      <div class="case-card reveal reveal-delay-2">
+        <div class="case-icon">⚖️</div>
+        <div class="case-sector">Jurídico</div>
+        <div class="case-title">Automação de Escritório Jurídico</div>
+        <div class="case-desc">Geração automática de contratos e petições, gestão de prazos processuais, controle de honorários e dashboard de produtividade por advogado.</div>
+        <div class="case-tags">
+          <span class="case-tag">Contratos</span>
+          <span class="case-tag">Prazos</span>
+          <span class="case-tag">Honorários</span>
+        </div>
+      </div>
+      <div class="case-card reveal reveal-delay-3">
+        <div class="case-icon">🏗️</div>
+        <div class="case-sector">Construção Civil</div>
+        <div class="case-title">Gestão de Obras e Orçamentos</div>
+        <div class="case-desc">Controle de insumos, cronograma de obras, geração de orçamentos em tempo real, acompanhamento de equipes e relatórios para clientes.</div>
+        <div class="case-tags">
+          <span class="case-tag">Orçamentos</span>
+          <span class="case-tag">Cronograma</span>
+          <span class="case-tag">Insumos</span>
+        </div>
+      </div>
+      <div class="case-card reveal reveal-delay-1">
+        <div class="case-icon">📦</div>
+        <div class="case-sector">Comércio</div>
+        <div class="case-title">Sistema de Pedidos e Estoque</div>
+        <div class="case-desc">Ponto de venda personalizado, controle de estoque em tempo real, gestão de fornecedores, relatórios de giro e alertas automáticos de reposição.</div>
+        <div class="case-tags">
+          <span class="case-tag">PDV</span>
+          <span class="case-tag">Estoque</span>
+          <span class="case-tag">Fornecedores</span>
+        </div>
+      </div>
+      <div class="case-card reveal reveal-delay-2">
+        <div class="case-icon">🎓</div>
+        <div class="case-sector">Educação</div>
+        <div class="case-title">Plataforma de Ensino Privado</div>
+        <div class="case-desc">Portal do aluno, controle de frequência, emissão de cobranças, acompanhamento pedagógico e comunicação integrada com responsáveis.</div>
+        <div class="case-tags">
+          <span class="case-tag">Matrículas</span>
+          <span class="case-tag">Cobranças</span>
+          <span class="case-tag">Portal</span>
+        </div>
+      </div>
+      <div class="case-card reveal reveal-delay-3">
+        <div class="case-icon">🔑</div>
+        <div class="case-sector">Imobiliário</div>
+        <div class="case-title">CRM Imobiliário Personalizado</div>
+        <div class="case-desc">Gestão de carteira de imóveis, funil de leads com automações, controle de visitas, geração de contratos e comissões automáticas.</div>
+        <div class="case-tags">
+          <span class="case-tag">CRM</span>
+          <span class="case-tag">Contratos</span>
+          <span class="case-tag">Leads</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- PLANOS -->
+<section id="planos">
+  <div class="section-inner">
+    <p class="section-tag reveal">Investimento</p>
+    <h2 class="section-title reveal reveal-delay-1">Planos transparentes, valor real</h2>
+    <p class="section-sub reveal reveal-delay-2">Implementação única + manutenção mensal. Sem surpresas, sem letras miúdas. O valor exato depende do escopo do seu sistema.</p>
+    <div class="pricing-grid">
+
+      <div class="price-card reveal reveal-delay-1">
+        <div class="price-name">Essencial</div>
+        <div class="price-main">Implementação a partir de</div>
+        <div class="price-impl">R$ 3.500</div>
+        <div class="price-recurrence">+ R$ 350/mês de manutenção</div>
+        <div class="price-divider"></div>
+        <ul class="price-features">
+          <li class="price-feature">Sistema com até 5 módulos funcionais</li>
+          <li class="price-feature">Instalação no seu ambiente</li>
+          <li class="price-feature">Treinamento da equipe (até 3 usuários)</li>
+          <li class="price-feature">Suporte via WhatsApp em horário comercial</li>
+          <li class="price-feature">1 rodada de ajustes no primeiro mês</li>
+        </ul>
+        <a href="#contato" class="price-btn price-btn-ghost">Solicitar proposta</a>
+      </div>
+
+      <div class="price-card featured reveal reveal-delay-2">
+        <div class="price-badge">Mais contratado</div>
+        <div class="price-name">Profissional</div>
+        <div class="price-main">Implementação a partir de</div>
+        <div class="price-impl">R$ 7.500</div>
+        <div class="price-recurrence">+ R$ 650/mês de manutenção</div>
+        <div class="price-divider"></div>
+        <ul class="price-features">
+          <li class="price-feature">Sistema com até 12 módulos funcionais</li>
+          <li class="price-feature">Integrações com sistemas externos (APIs)</li>
+          <li class="price-feature">Treinamento completo (usuários ilimitados)</li>
+          <li class="price-feature">Suporte prioritário com SLA de 4h</li>
+          <li class="price-feature">Atualizações mensais incluídas</li>
+          <li class="price-feature">Relatórios e dashboards personalizados</li>
+        </ul>
+        <a href="#contato" class="price-btn price-btn-primary">Solicitar proposta</a>
+      </div>
+
+      <div class="price-card reveal reveal-delay-3">
+        <div class="price-name">Enterprise</div>
+        <div class="price-main">Implementação</div>
+        <div class="price-impl">Sob consulta</div>
+        <div class="price-recurrence">Manutenção personalizada</div>
+        <div class="price-divider"></div>
+        <ul class="price-features">
+          <li class="price-feature">Sistema de alta complexidade, módulos ilimitados</li>
+          <li class="price-feature">Múltiplas integrações e automações avançadas</li>
+          <li class="price-feature">Gerente de projeto dedicado</li>
+          <li class="price-feature">Suporte 24/7 com SLA garantido em contrato</li>
+          <li class="price-feature">Roadmap de evolução trimestral</li>
+          <li class="price-feature">Infraestrutura e hospedagem incluídas</li>
+        </ul>
+        <a href="#contato" class="price-btn price-btn-ghost">Falar com especialista</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- CTA / CONTATO -->
+<section id="contato">
+  <div class="cta-section">
+    <p class="section-tag reveal" style="margin-bottom:16px">Vamos conversar</p>
+    <h2 class="reveal reveal-delay-1">Pronto para ter um sistema<br><span style="background:linear-gradient(135deg,#c084fc,#818cf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">feito para você?</span></h2>
+    <p class="reveal reveal-delay-2">Preencha o formulário e entraremos em contato em até 24 horas para agendar um diagnóstico gratuito.</p>
+    <form class="contact-form reveal reveal-delay-3" onsubmit="handleSubmit(event)">
+      <div class="form-row">
+        <input type="text" class="form-field" placeholder="Seu nome" required>
+        <input type="text" class="form-field" placeholder="Empresa ou área" required>
+      </div>
+      <div class="form-row">
+        <input type="email" class="form-field" placeholder="E-mail" required>
+        <input type="tel" class="form-field" placeholder="WhatsApp">
+      </div>
+      <select class="form-field">
+        <option value="" disabled selected>Qual sua área de atuação?</option>
+        <option>Saúde</option>
+        <option>Jurídico</option>
+        <option>Construção Civil</option>
+        <option>Comércio</option>
+        <option>Educação</option>
+        <option>Imobiliário</option>
+        <option>Contabilidade</option>
+        <option>Outros</option>
+      </select>
+      <textarea class="form-field" placeholder="Descreva brevemente o problema ou processo que você quer resolver..."></textarea>
+      <button type="submit" class="form-submit">Solicitar diagnóstico gratuito →</button>
+    </form>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">
+    <img src="/mnt/user-data/uploads/LogoSynkDigital.png" alt="Synk Digital">
+  </div>
+  <ul class="footer-links">
+    <li><a href="#processo">Como funciona</a></li>
+    <li><a href="#sistemas">Sistemas</a></li>
+    <li><a href="#planos">Planos</a></li>
+    <li><a href="#contato">Contato</a></li>
+  </ul>
+  <p class="footer-copy">© 2025 Synk Digital. Todos os direitos reservados.</p>
+</footer>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  function animCursor() {
+    cursor.style.left = mx + 'px'; cursor.style.top = my + 'px';
+    rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+    requestAnimationFrame(animCursor);
+  }
+  animCursor();
+
+  // Reveal on scroll
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  reveals.forEach(el => observer.observe(el));
+
+  // Form
+  function handleSubmit(e) {
+    e.preventDefault();
+    const btn = e.target.querySelector('.form-submit');
+    btn.textContent = '✓ Mensagem enviada! Entraremos em contato em breve.';
+    btn.style.background = 'linear-gradient(135deg, #166534, #15803d)';
+    btn.disabled = true;
+  }
+
+  // Nav scroll effect
+  window.addEventListener('scroll', () => {
+    const nav = document.querySelector('nav');
+    nav.style.borderBottomColor = window.scrollY > 50
+      ? 'rgba(255,255,255,0.1)'
+      : 'rgba(255,255,255,0.06)';
+  });
+</script>
+</body>
+</html>
